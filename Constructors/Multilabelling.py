@@ -2,43 +2,15 @@ import MultiLabel
 
 class MultiLabelling:
     def __init__(self, initial_mapping=None):
-        """
-        Constructor for the MultiLabelling class.
-
-        Parameters:
-        - initial_mapping (dict): Initial mapping from variable names to multilabels.
-        """
         self.labelling_map = initial_mapping if initial_mapping else {}
 
     def get_multilabel_for_name(self, variable_name):
-        """
-        Get the multilabel assigned to a given variable name.
-
-        Parameters:
-        - variable_name (str): Name of the variable.
-
-        Returns:
-        - MultiLabel: Multilabel assigned to the specified variable name.
-        """
         return self.labelling_map.get(variable_name, MultiLabel([]))
 
     def update_multilabel_for_name(self, variable_name, new_multilabel):
-        """
-        Update the multilabel assigned to a given variable name.
-
-        Parameters:
-        - variable_name (str): Name of the variable.
-        - new_multilabel (MultiLabel): New multilabel to be assigned.
-        """
         self.labelling_map[variable_name] = new_multilabel
 
     def __str__(self):
-        """
-        String representation of the MultiLabelling object.
-
-        Returns:
-        - str: String representation of the MultiLabelling.
-        """
         return "\n".join([f"{variable_name}: {multilabel}" for variable_name, multilabel in self.labelling_map.items()])
 
 # Example usage:

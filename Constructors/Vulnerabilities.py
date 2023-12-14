@@ -1,22 +1,10 @@
 class Vulnerabilities:
     def __init__(self):
-        """
-        Constructor for the Vulnerabilities class.
-
-        Initializes an empty dictionary to store vulnerabilities.
-        """
+        
         self.vulnerabilities_dict = {}
 
     def report_vulnerability(self, name, multilabel):
-        """
-        Report a detected vulnerability.
-
-        Parameters:
-        - name (str): Name representing the detected illegal flows.
-        - multilabel (MultiLabel): Multilabel containing sources and sanitizers for the patterns.
-
-        Saves the detected vulnerability in the vulnerabilities dictionary.
-        """
+        
         if name not in self.vulnerabilities_dict:
             self.vulnerabilities_dict[name] = []
 
@@ -24,12 +12,7 @@ class Vulnerabilities:
         self.vulnerabilities_dict[name].append(multilabel)
 
     def get_vulnerabilities(self):
-        """
-        Get all detected vulnerabilities.
-
-        Returns:
-        - dict: Dictionary containing vulnerabilities organized by vulnerability names.
-        """
+        
         return self.vulnerabilities_dict
 
 
