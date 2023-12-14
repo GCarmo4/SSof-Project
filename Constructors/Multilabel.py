@@ -19,7 +19,11 @@ class MultiLabel():
             if pattern in other_multi_label.pattern_labels:
                 combined_label = self.pattern_labels[pattern].combine(other_multi_label.pattern_labels[pattern])
                 combined_multi_label.pattern_labels[pattern] = combined_label
-
+            else:
+                combined_multi_label.pattern_labels[pattern] = self.pattern_labels[pattern]
+        for pattern in other_multi_label:
+            if pattern not in combined_multi_label.pattern_labels:
+                combined_multi_label.pattern_labels[pattern] = other_multi_label.pattern_labels[pattern]
         return combined_multi_label
     
     def get_pattern_names(self):
