@@ -1,6 +1,8 @@
 import ast
 import json
-from your_module_containing_classes import MultiLabel, Policy, Vulnerabilities
+import MultiLabel
+import Policy
+import Vulnerabilities
 
 def process_expression(node, policy, multilabel, vulnerabilities, program_counter_multilabel):
     if isinstance(node, ast.BinOp):
@@ -28,28 +30,26 @@ def process_expression(node, policy, multilabel, vulnerabilities, program_counte
         multilabel.update_multilabel_for_name(target_name, value_multilabel)
         return value_multilabel
 
-# Example usage in your main function
 def main():
-    # Assuming you have a list of patterns
-    patterns = [...]  # Replace [...] with your actual patterns
+    # meter a lista de patterns
+    patterns = [...] 
 
-    # Initialize Policy, MultiLabelling, and Vulnerabilities objects
+    # inicializar
     policy = Policy(patterns)
     multilabel = MultiLabel(patterns)
     vulnerabilities = Vulnerabilities()
 
-    # Mock program counter multilabel (modify based on your actual implementation)
     program_counter_multilabel = MultiLabel(patterns)
 
-    # Read and import AST (assuming you have a function to do this)
+    # ler e importar o codigo e usar a otura function pra ir buscar
     ast_tree = sample_code.get_ast_from_code("your_python_program.py")
 
-    # Traverse AST and process expressions
+    # fazer o traverse
     for node in ast.walk(ast_tree):
         if isinstance(node, ast.Expr):
             process_expression(node, policy, multilabel, vulnerabilities, program_counter_multilabel)
 
-    # Display results
+    # mostrar nha resultado
     print("Multilabel after processing expressions:")
     print(multilabel)
 
