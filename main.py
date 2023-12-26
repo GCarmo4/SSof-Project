@@ -2,6 +2,22 @@ import sys
 import ast
 import json
 
+def analyze_code(tree):
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    print(f"Assignment at line {target.lineno}: {target.id}")
+
+        elif isinstance(node, ast.Call):
+           
+            if isinstance(node.func, ast.Name):
+                print(f"Function call at line {node.lineno}: {node.func.id}")
+
+
+
 def main():
 
     # Receives two arguments
@@ -52,6 +68,12 @@ def main():
     vulnerabilities = None
     if (len(vul_content) == 0):
         vulnerabilities = []
+    
+    #with open("ast.json", "w", encoding="utf-8") as outfile:
+    #    json.dump(ast_json, outfile, indent=1)
+
+    analyze_code(ast_tree)
+
 
 
     with open(outputFile, "w", encoding="utf-8") as outfile:
