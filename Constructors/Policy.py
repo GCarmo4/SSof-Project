@@ -26,4 +26,11 @@ class Policy:
             if name in pattern.sink_names and name in multilabel.get_sources():
                 illegal_multilabel.pattern_labels[pattern.vulnerability_name] = multilabel.pattern_labels[pattern.vulnerability_name]
 
+    def illegal_flows_for_program_counter(self, name, multilabel):
+        illegal_multilabel = MultiLabel([])
+
+        for pattern in self.patterns:
+            if name in pattern.sink_names and multilabel.has_source(pattern.source_names):
+                illegal_multilabel.pattern_labels[pattern.vulnerability_name] = multilabel.pattern_labels[pattern.vulnerability_name]
+
         return illegal_multilabel
