@@ -34,3 +34,6 @@ class Policy:
                 illegal_multilabel.pattern_labels[pattern.vulnerability_name] = multilabel.pattern_labels[pattern.vulnerability_name]
 
         return illegal_multilabel
+    
+    def add_pattern(self, pattern):
+        self.patterns += [pattern]

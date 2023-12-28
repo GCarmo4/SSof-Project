@@ -1,6 +1,8 @@
 import sys
 import ast
 import json
+import Pattern
+import Policy
 
 def analyze_code(tree):
 
@@ -65,9 +67,14 @@ def main():
     ast_tree = ast.parse(python_content)
     ast_json = json.loads(json.dumps(ast_tree, default=lambda x: x.__dict__))
 
+    policy = Policy([])
     vulnerabilities = None
     if (len(vul_content) == 0):
         vulnerabilities = []
+    else:
+        for i in len(vul_content)-1:
+            p=vul_content[i]
+            policy.add_pattern(Pattern(p["vulnerability"], p["sources"], p["sanitizers"], p["sinks"]))
     
     #with open("ast.json", "w", encoding="utf-8") as outfile:
     #    json.dump(ast_json, outfile, indent=1)
