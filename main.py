@@ -1,8 +1,8 @@
 import sys
 import ast
 import json
-import Pattern
-import Policy
+from Pattern import *
+from Policy import *
 
 def analyze_code(tree):
 
@@ -72,7 +72,7 @@ def main():
     if (len(vul_content) == 0):
         vulnerabilities = []
     else:
-        for i in len(vul_content)-1:
+        for i in range(len(vul_content)):
             p=vul_content[i]
             policy.add_pattern(Pattern(p["vulnerability"], p["sources"], p["sanitizers"], p["sinks"]))
     
