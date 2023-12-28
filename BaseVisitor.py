@@ -1,9 +1,10 @@
 import ast
 class BaseVisitor (ast.NodeVisitor):
 
-    def __init__(self, root: ast.Module):
+    def __init__(self, root: ast.Module, vulnerabilities):
         self.root = root
         super().__init__()
+        self.vulnerabilities = vulnerabilities
 
 
     def visit_tree(self):
