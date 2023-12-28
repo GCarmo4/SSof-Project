@@ -1,4 +1,4 @@
-import Label
+import Constructors.Label as Label
 class Pattern:
     def __init__(self, vulnerability_name, source_names, sanitizer_names, sink_names):
         self.vulnerability_name = vulnerability_name

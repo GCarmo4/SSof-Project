@@ -1,4 +1,4 @@
-import MultiLabel
+import Constructors.Multilabel as Multilabel
 
 class Policy:
     def __init__(self, patterns):

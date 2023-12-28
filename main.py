@@ -1,8 +1,8 @@
 import sys
 import ast
 import json
-from Pattern import *
-from Policy import *
+from Constructors.Pattern import *
+from Constructors.Policy import *
 
 def analyze_code(tree):
 

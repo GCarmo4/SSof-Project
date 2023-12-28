@@ -1,4 +1,4 @@
-import Label
+import Constructors.Label as Label
 
 class MultiLabel():
     def __init__(self, patterns):
