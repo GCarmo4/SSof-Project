@@ -1,5 +1,6 @@
 import ast
 import BaseVisitor
+import Multilabel
 class TestVisitor (BaseVisitor):
     """
     Test visitor class that prints the name of every node it visits.
@@ -38,8 +39,10 @@ class TestVisitor (BaseVisitor):
         self.generic_visit(node)
 
     def visit_Expr(self, node):
-        print(f"Visiting Expr")
-        self.generic_visit(node)
+        multilabel = self.visit(node.body)
+        if multilabel == None:
+            multilabel = Multilabel([])
+        return multilabel
 
     def visit_Assign(self, node):
         print(f"Visiting Assign")
