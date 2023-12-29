@@ -7,8 +7,8 @@ class TestVisitor (BaseVisitor):
     """
 
     def visit_Constant(self, node: ast.Constant) -> None:
-        print(f"Visiting Constant: {node.value}")
-        self.generic_visit(node)
+        multilabel = Multilabel([])
+        return multilabel
 
     def visit_Name(self, node):
         if node.id in self.policy.get_all_sources():
