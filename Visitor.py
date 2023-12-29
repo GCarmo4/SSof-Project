@@ -1,12 +1,18 @@
 import ast
-import BaseVisitor
-import Multilabel
-class TestVisitor (BaseVisitor):
-    """
-    Test visitor class that prints the name of every node it visits.
-    """
+from BaseVisitor import *
+from Constructors.Multilabel import *
+from Constructors.Multilabelling import *
 
-    def visit_Constant(self, node: ast.Constant) -> None:
+class Visitor (BaseVisitor):
+
+    def __init__(self, root, vulnerabilities, policy):
+        super().__init__(root, vulnerabilities, policy)
+        self.multilabelling = Multilabelling()
+    
+    def visit(self, expr):
+        return self.multilabelling.get_multilabel_for_name(expr)
+
+    def visit_Constant(self, node):
         multilabel = Multilabel([])
         return multilabel
 
@@ -57,12 +63,25 @@ class TestVisitor (BaseVisitor):
         return multilabel
 
     def visit_Call(self, node):
-        print(f"Visiting Call")
-        self.generic_visit(node)
+        multilabel = self.visit(node.func)
+        if multilabel is None:
+            multilabel = Multilabel([])
+
+        for arg in node.args:
+            arg_multilabel = self.visit(arg)
+            if arg_multilabel is None:
+                arg_multilabel = Multilabel([])
+            multilabel = multilabel.combine(arg_multilabel)
+        
+        return multilabel
 
     def visit_Attribute(self, node):
-        print(f"Visiting Attribute: {node.attr}")
-        self.generic_visit(node)
+        value_multilabel = self.visit(node.value)
+        if value_multilabel is None:
+            value_multilabel = Multilabel([])
+
+        return value_multilabel
+
 
     def visit_Expr(self, node):
         multilabel = self.visit(node.value)
@@ -71,13 +90,28 @@ class TestVisitor (BaseVisitor):
         return multilabel
 
     def visit_Assign(self, node):
-        print(f"Visiting Assign")
-        self.generic_visit(node)
+        multilabel = self.visit(node.value)
+        if multilabel is None:
+            multilabel = Multilabel([])
+        
+        for target in node.targets:
+            self.multilabelling.update_multilabel_for_name(target, multilabel)
 
+        return multilabel
+    
     def visit_If(self, node):
-        print(f"Visiting If")
-        self.generic_visit(node)
+        multilabel = self.visit(node.test)
+        if multilabel is None:
+            multilabel = Multilabel([])
+
+        return multilabel
 
     def visit_While(self, node):
-        print(f"Visiting While")
-        self.generic_visit(node)
+        temp = self.multilabelling
+
+        multilabel = self.visit(node.test)
+        if multilabel is None:
+            multilabel = Multilabel([])
+        
+
+        return multilabel

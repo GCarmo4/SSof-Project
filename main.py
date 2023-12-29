@@ -3,20 +3,49 @@ import ast
 import json
 from Constructors.Pattern import *
 from Constructors.Policy import *
+from Constructors.Multilabelling import *
+from Visitor import *
 
-def analyze_code(tree):
+def analyze_code(tree, vulnerabilities, policy):
+
+    testVisitor = Visitor(tree, vulnerabilities, policy)
 
     for node in ast.walk(tree):
-        if isinstance(node, ast.Assign):
-            
-            for target in node.targets:
-                if isinstance(target, ast.Name):
-                    print(f"Assignment at line {target.lineno}: {target.id}")
+        if isinstance(node, ast.Constant):
+            testVisitor.visit_Constant(node)
 
+        elif isinstance(node, ast.Name):
+            testVisitor.visit_Name(node)
+
+        elif isinstance(node, ast.BinOp):
+            testVisitor.visit_BinOp(node)
+
+        elif isinstance(node, ast.UnaryOp):
+            testVisitor.visit_UnaryOp(node)
+
+        elif isinstance(node, ast.BoolOp):
+            testVisitor.visit_BoolOp(node)
+
+        elif isinstance(node, ast.Compare):
+            testVisitor.visit_Compare(node)
+            
         elif isinstance(node, ast.Call):
-           
-            if isinstance(node.func, ast.Name):
-                print(f"Function call at line {node.lineno}: {node.func.id}")
+            testVisitor.visit_Call(node)
+
+        elif isinstance(node, ast.Attribute):
+            testVisitor.visit_Attribute(node)
+
+        elif isinstance(node, ast.Expr):
+            testVisitor.visit_Expr(node)
+
+        elif isinstance(node, ast.Assign):
+            testVisitor.visit_Assign(node)
+
+        elif isinstance(node, ast.If):
+            testVisitor.visit_If(node)
+
+        elif isinstance(node, ast.While):
+            testVisitor.visit_While(node)
 
 
 
@@ -79,7 +108,7 @@ def main():
     #with open("ast.json", "w", encoding="utf-8") as outfile:
     #    json.dump(ast_json, outfile, indent=1)
 
-    analyze_code(ast_tree)
+    analyze_code(ast_tree, vulnerabilities, policy)
 
 
 

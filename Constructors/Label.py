@@ -1,4 +1,5 @@
-class Label(object):
+class Label (object):
+
     def __init__(self):
         self.sources = []
         self.sanitizers = []
@@ -35,4 +36,3 @@ class Label(object):
     
     def __str__(self):
         return f"Sources: {self.sources}\nSanitizers: {self.sanitizers}"
-

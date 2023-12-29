@@ -1,6 +1,6 @@
 import Constructors.Label as Label
 
-class MultiLabel():
+class Multilabel():
     def __init__(self, patterns):
         self.pattern_labels = {pattern: Label() for pattern in patterns}
 
@@ -13,7 +13,7 @@ class MultiLabel():
             self.pattern_labels[pattern].add_sanitizer(sanitizer_name)
 
     def combine(self, other_multi_label):
-        combined_multi_label = MultiLabel([])
+        combined_multi_label = Multilabel([])
 
         for pattern in self.pattern_labels:
             if pattern in other_multi_label.pattern_labels:
@@ -21,7 +21,7 @@ class MultiLabel():
                 combined_multi_label.pattern_labels[pattern] = combined_label
             else:
                 combined_multi_label.pattern_labels[pattern] = self.pattern_labels[pattern]
-        for pattern in other_multi_label:
+        for pattern in other_multi_label.pattern_labels:
             if pattern not in combined_multi_label.pattern_labels:
                 combined_multi_label.pattern_labels[pattern] = other_multi_label.pattern_labels[pattern]
         return combined_multi_label
