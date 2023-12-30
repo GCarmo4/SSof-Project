@@ -1,15 +1,15 @@
-import Constructors.Label as Label
+from Constructors.Label import *
 
 class Multilabel():
     def __init__(self, patterns):
-        self.pattern_labels = {pattern: Label() for pattern in patterns}
+        self.pattern_labels = {pattern: Labels() for pattern in patterns}
 
     def add_source(self, pattern, source_name):
-        if pattern in self.pattern_labels and source_name in self.pattern_labels[pattern].valid_sources:
+        if (pattern in self.pattern_labels.keys()) and (source_name not in self.pattern_labels[pattern].sources):
             self.pattern_labels[pattern].add_source(source_name)
 
     def add_sanitizer(self, pattern, sanitizer_name):
-        if pattern in self.pattern_labels and sanitizer_name in self.pattern_labels[pattern].valid_sanitizers:
+        if (pattern in self.pattern_labels.keys()) and (sanitizer_name not in self.pattern_labels[pattern].sanitizers):
             self.pattern_labels[pattern].add_sanitizer(sanitizer_name)
 
     def combine(self, other_multi_label):
@@ -30,7 +30,7 @@ class Multilabel():
         patterns = self.pattern_labels.keys()
         names = []
         for pattern in patterns:
-            names += [pattern.pattern_name]
+            names.append(self.pattern_labels[pattern])
         return names
 
     def __str__(self):

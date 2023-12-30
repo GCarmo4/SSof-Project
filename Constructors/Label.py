@@ -1,4 +1,4 @@
-class Label (object):
+class Labels (object):
 
     def __init__(self):
         self.sources = []
@@ -29,7 +29,7 @@ class Label (object):
             return None
 
     def combine(self, other_label):
-        combined_label = Label()
+        combined_label = Labels()
         combined_label.sources = self.sources.copy() + other_label.get_sources().copy()
         combined_label.sanitizers = self.sanitizers.copy() + other_label.get_sanitizers().copy()
         return combined_label
