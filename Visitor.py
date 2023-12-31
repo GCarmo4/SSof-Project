@@ -8,9 +8,16 @@ class Visitor (BaseVisitor):
     def __init__(self, root, vulnerabilities, policy):
         super().__init__(root, vulnerabilities, policy)
         self.multilabelling = Multilabelling()
+        self.policy = policy
     
     def visit(self, expr):
         return self.multilabelling.get_multilabel_for_name(expr)
+
+    def check_iflow(self, name, lineno, multilabel, implicit: bool = False):
+        iflow = self.policy.get_illegal_flows(name,multilabel, implicit)
+        
+        if len(iflow.pattern_labels) != 0:
+            self.vulnerabilities.add_vulnerability_by_multilabel(iflow, Sink(name,lineno))
 
     def visit_Constant(self, node):
         multilabel = Multilabel([])
@@ -22,6 +29,8 @@ class Visitor (BaseVisitor):
             multilabel = Multilabel(patterns)
             for pattern in patterns:
                 multilabel.add_source(pattern, node.id)
+
+            self.check_iflow(node.id, node.lineno, multilabel)
         #if node.id in self.policy.get_all_sinks():
         # ainda n descobri o q fzr / como, c os sinks
 

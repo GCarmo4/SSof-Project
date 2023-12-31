@@ -2,11 +2,18 @@ from Constructors.Label import *
 
 class Multilabel():
     def __init__(self, patterns):
+        print("patterns:", patterns)
         self.pattern_labels = {pattern: Labels() for pattern in patterns}
 
     def add_source(self, pattern, source_name):
         if (pattern in self.pattern_labels.keys()) and (source_name not in self.pattern_labels[pattern].sources):
             self.pattern_labels[pattern].add_source(source_name)
+
+    def get_source(self, pattern):
+        if pattern in self.pattern_labels.keys():
+            return self.pattern_labels[pattern].get_sources()
+        else:
+            return []
 
     def add_sanitizer(self, pattern, sanitizer_name):
         if (pattern in self.pattern_labels.keys()) and (sanitizer_name not in self.pattern_labels[pattern].sanitizers):

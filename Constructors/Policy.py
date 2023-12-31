@@ -1,4 +1,4 @@
-import Constructors.Multilabel as Multilabel
+from Constructors.Multilabel import *
 
 class Policy:
     def __init__(self, patterns):
@@ -38,21 +38,28 @@ class Policy:
         sinks = [pattern.sink_names for pattern in self.patterns if pattern.vulnerability_name == vulnerability_name]
         return sinks[0] if sinks else []
 
-    def illegal_flows(self, name, multilabel):
-        illegal_multilabel = Multilabel([])
-
-        for pattern in self.patterns:
-            if name in pattern.sink_names and name in multilabel.get_sources():
-                illegal_multilabel.pattern_labels[pattern.vulnerability_name] = multilabel.pattern_labels[pattern.vulnerability_name]
-
     def illegal_flows_for_program_counter(self, name, multilabel):
-        illegal_multilabel = MultiLabel([])
+        illegal_multilabel = Multilabel([])
 
         for pattern in self.patterns:
             if name in pattern.sink_names and multilabel.has_source(pattern.source_names):
                 illegal_multilabel.pattern_labels[pattern.vulnerability_name] = multilabel.pattern_labels[pattern.vulnerability_name]
 
         return illegal_multilabel
+    
+    def get_illegal_flows(self, name: str, multilabel: Multilabel, implicit: bool = False) -> Multilabel:
+        illegal_flows_multilabel = Multilabel([])
+        print("\n\n\n")
+        print(multilabel)
+        pattern_labels = multilabel.pattern_labels
+        print("name:", name) # check if pattern_labels has stuff like {str , label}
+        print(pattern_labels.keys())
+        for pattern in pattern_labels.keys():
+            if pattern.is_sink(name) and not (not pattern.implicit and implicit):
+                #print(f"Found illegal flow for pattern {pattern.vulnerability}")
+                illegal_flows_multilabel.update({pattern: pattern_labels[pattern]})
+        
+        return illegal_flows_multilabel
     
     def add_pattern(self, pattern):
         self.patterns += [pattern]
