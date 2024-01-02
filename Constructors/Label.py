@@ -7,6 +7,9 @@ class Labels (object):
     def add_source(self, source_name):
         self.sources.append(source_name)
 
+    def is_empty():
+        return len(self.sources) == 0
+
     def add_sanitizer(self, sanitizer_name):
         self.sanitizers.append(sanitizer_name)
 
