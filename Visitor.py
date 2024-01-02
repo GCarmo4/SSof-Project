@@ -35,7 +35,7 @@ class Visitor (BaseVisitor):
         patterns_for_sink = self.policy.get_pattern_sink(node.id)
         if len(patterns_for_sink) != 0:
             multilabel = Multilabel([])
-            multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno))
+            multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno), self.vulnerabilities)
 
 
         #if node.id in self.policy.get_all_sinks():
@@ -49,7 +49,7 @@ class Visitor (BaseVisitor):
         right_multilabel = self.visit(node.right)
         if right_multilabel is None:
             right_multilabel = Multilabel([])
-        multilabel = multilabel.combine(right_multilabel)
+        multilabel = multilabel.combine(right_multilabel, self.vulnerabilities)
         return multilabel
 
     def visit_UnaryOp(self, node):
@@ -66,7 +66,7 @@ class Visitor (BaseVisitor):
             val_multilabel = self.visit(node.values[i])
             if val_multilabel is None:
                 val_multilabel = Multilabel([])
-            multilabel = multilabel.combine(val_multilabel)
+            multilabel = multilabel.combine(val_multilabel, self.vulnerabilities)
         return multilabel
 
     def visit_Compare(self, node):
@@ -75,7 +75,7 @@ class Visitor (BaseVisitor):
             comp_multilabel = self.visit(comp)
             if comp_multilabel is None:
                 comp_multilabel = Multilabel([])
-            multilabel = multilabel.combine(comp_multilabel)
+            multilabel = multilabel.combine(comp_multilabel, self.vulnerabilities)
         return multilabel
 
     def visit_Call(self, node):
@@ -87,7 +87,7 @@ class Visitor (BaseVisitor):
             arg_multilabel = self.visit(arg)
             if arg_multilabel is None:
                 arg_multilabel = Multilabel([])
-            multilabel = multilabel.combine(arg_multilabel)
+            multilabel = multilabel.combine(arg_multilabel, self.vulnerabilities)
         
         return multilabel
 
