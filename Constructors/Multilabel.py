@@ -46,7 +46,8 @@ class Multilabel():
         return combined_multi_label
     
     def has_illegal_flow(self):
-        for pattern in self.pattern_sinks:
+        temp = self.pattern_sinks.copy()
+        for pattern in temp:
             if pattern not in self.pattern_labels:
                 self.pattern_sinks.pop(pattern)
         return len(self.pattern_sinks) != 0
