@@ -4,10 +4,11 @@ class Multilabel():
     def __init__(self, patterns):
         print("patterns:", patterns)
         self.pattern_labels = {pattern: Labels() for pattern in patterns}
+        self.pattern_sinks = {}
 
-    def add_source(self, pattern, source_name):
-        if (pattern in self.pattern_labels.keys()) and (source_name not in self.pattern_labels[pattern].sources):
-            self.pattern_labels[pattern].add_source(source_name)
+    def add_source(self, pattern, source):
+        if (pattern in self.pattern_labels.keys()) and (source not in self.pattern_labels[pattern].sources):
+            self.pattern_labels[pattern].add_source(source)
 
     def get_source(self, pattern):
         if pattern in self.pattern_labels.keys():
@@ -18,6 +19,10 @@ class Multilabel():
     def add_sanitizer(self, pattern, sanitizer_name):
         if (pattern in self.pattern_labels.keys()) and (sanitizer_name not in self.pattern_labels[pattern].sanitizers):
             self.pattern_labels[pattern].add_sanitizer(sanitizer_name)
+
+    def add_patterns_sink(self, patterns, sink):
+        for pattern in patterns:
+            self.pattern_sinks[pattern] = sink
 
     def combine(self, other_multi_label):
         combined_multi_label = Multilabel([])

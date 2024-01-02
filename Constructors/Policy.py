@@ -4,6 +4,13 @@ class Policy:
     def __init__(self, patterns):
         self.patterns = patterns
 
+    def get_pattern_sink(self, sink):
+        patterns_sink=[]
+        for pattern in self.patterns:
+            if pattern.is_sink(sink):
+                patterns_sink += [pattern]
+        return patterns_sink
+
     def get_all_vulnerabilities(self):
         return [pattern.get_vulnerability_name() for pattern in self.patterns]
     
