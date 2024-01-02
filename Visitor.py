@@ -33,9 +33,9 @@ class Visitor (BaseVisitor):
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
         patterns_for_sink = []
         patterns_for_sink = self.policy.get_pattern_sink(node.id)
-        if len(patterns_for_sink != 0):
+        if len(patterns_for_sink) != 0:
             multilabel = Multilabel([])
-            multilabel.add_sink(patterns_for_sink, Sink(node.id, node.lineno))
+            multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno))
 
 
         #if node.id in self.policy.get_all_sinks():
