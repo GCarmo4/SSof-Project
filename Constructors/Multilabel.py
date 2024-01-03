@@ -9,10 +9,6 @@ class Multilabel():
 
     def add_source(self, pattern, source):
         self.pattern_labels[pattern].add_source(source)
-        temp = self.pattern_labels.copy()
-        #temp_value = temp[pattern]
-        temp[pattern] = temp.pop(pattern)
-        self.pattern_labels = temp
 
     def get_source(self, pattern):
         if pattern in self.pattern_labels.keys():
