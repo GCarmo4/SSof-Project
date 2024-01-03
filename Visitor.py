@@ -54,7 +54,7 @@ class Visitor (BaseVisitor):
         right_multilabel = self.visit(node.right)
         if right_multilabel is None:
             right_multilabel = Multilabel(self.policy.patterns)
-        multilabel = multilabel.combine(right_multilabel, self.vulnerabilities)
+        multilabel = multilabel.combine(right_multilabel, self.vulnerabilities, False)
         return multilabel
 
     def visit_UnaryOp(self, node):

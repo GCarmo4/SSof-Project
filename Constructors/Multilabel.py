@@ -27,14 +27,15 @@ class Multilabel():
             vulnerabilities.report_vulnerability(self)
             self.pattern_sinks.clear()
 
-    def combine(self, other_multi_label, vulnerabilities):
+    def combine(self, other_multi_label, vulnerabilities, combine_sink = True):
         combined_multi_label = Multilabel([])
         for pattern in self.pattern_labels:
             combined_multi_label.pattern_labels[pattern] = self.pattern_labels[pattern].combine(other_multi_label.pattern_labels[pattern])
-        if len(self.pattern_sinks) != 0:
-            combined_multi_label.pattern_sinks = self.pattern_sinks
-        if len(other_multi_label.pattern_sinks) != 0:
-            combined_multi_label.pattern_sinks = other_multi_label.pattern_sinks
+        if combine_sink:
+            if len(self.pattern_sinks) != 0:
+                combined_multi_label.pattern_sinks = self.pattern_sinks
+            if len(other_multi_label.pattern_sinks) != 0:
+                combined_multi_label.pattern_sinks = other_multi_label.pattern_sinks
         if combined_multi_label.has_illegal_flow():
             vulnerabilities.report_vulnerability(combined_multi_label)
             combined_multi_label.pattern_sinks = {}
