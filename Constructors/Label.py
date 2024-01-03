@@ -3,6 +3,7 @@ class Labels (object):
     def __init__(self):
         self.sources = []
         self.sanitizers = {}
+        self.unsanitized_illegal_flows = 0
 
     def add_source(self, source_name):
         sources = []
@@ -55,6 +56,7 @@ class Labels (object):
                 combined_label.sanitizers[key] += value
             else:
                 combined_label.sanitizers[key] = value
+        combined_label.unsanitized_illegal_flows = max(self.unsanitized_illegal_flows, other_label.unsanitized_illegal_flows)
         return combined_label
     
     def get_sanitizers_for_source(self, source):
@@ -64,5 +66,20 @@ class Labels (object):
                 sanitizers += [sanitizer]
         return sanitizers
     
+    def get_largest_sanitizer_source_list(self):
+        temp = 0
+        temp_list = []
+        for s in self.sanitizers:
+            if len(self.sanitizers[s]) > temp:
+                temp = len(self.sanitizers[s])
+                temp_list = self.sanitizers[s]
+        return temp_list
+    
+    def source_in_sanitizer(self, source_name):
+        for s in self.sanitizers:
+            if source_name in self.sanitizers[s]:
+                return True
+        return False
+
     def __str__(self):
         return f"Sources: {self.sources}\nSanitizers: {self.sanitizers}"

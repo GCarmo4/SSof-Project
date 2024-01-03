@@ -13,6 +13,8 @@ class Vulnerabilities:
         patterns = list(multilabel.pattern_sinks.keys())
         for pattern in patterns:
             for source in multilabel.pattern_labels[pattern].sources:
+                if multilabel.pattern_labels[pattern].source_in_sanitizer(source):
+                    multilabel.pattern_labels[pattern].unsanitized_illegal_flows += 1
                 print(multilabel.pattern_sinks[pattern])
                 if not multilabel.pattern_labels[pattern].is_empty():
                     vulnerability = {}
@@ -20,7 +22,7 @@ class Vulnerabilities:
                     vulnerability["source"] = (source.name, source.line)
                     sink = multilabel.pattern_sinks[pattern]
                     vulnerability["sink"] = (sink.name, sink.line)
-                    if len(multilabel.pattern_labels[pattern].sources) == len(multilabel.pattern_labels[pattern].sanitizers):
+                    if multilabel.pattern_labels[pattern].unsanitized_illegal_flows == 0:
                         vulnerability["unsanitized_flows"] = "no"
                     else:
                         vulnerability["unsanitized_flows"] = "yes"
