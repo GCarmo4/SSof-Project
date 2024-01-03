@@ -4,6 +4,7 @@ from Constructors.Multilabel import *
 from Constructors.Multilabelling import *
 from Constructors.Source import *
 from Constructors.Sink import *
+from Constructors.Sanitizer import *
 
 class Visitor (BaseVisitor):
 
@@ -27,23 +28,23 @@ class Visitor (BaseVisitor):
 
     def visit_Name(self, node):
         multilabel = Multilabel(self.policy.patterns)
-        print(node.id)
+
+        if node.id in self.multilabelling.labelling_map:
+            multilabel = self.multilabelling.get_multilabel_for_name(node.id)
+
         if node.id in self.policy.get_all_sources():
-            print("here")
+            print("source", node.lineno)
             patterns = self.policy.get_patterns_for_source(node.id)
             for pattern in patterns:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
-                print("source", multilabel.pattern_labels[pattern])
         patterns_for_sink = []
         patterns_for_sink = self.policy.get_pattern_sink(node.id)
-        if len(patterns_for_sink) != 0:
-            print("AHAHAHAH")
+        if (len(patterns_for_sink) != 0) and (node.id not in self.vulnerabilities.get_all_sinks()):
+            print("sus", node.id)
             multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno), self.vulnerabilities)
-            print("sssss", multilabel.pattern_sinks)
 
+        
         return multilabel
-        #if node.id in self.policy.get_all_sinks():
-        # ainda n descobri o q fzr / como, c os sinks
 
 
     def visit_BinOp(self, node):
@@ -83,9 +84,7 @@ class Visitor (BaseVisitor):
         return multilabel
 
     def visit_Call(self, node):
-        print("call")
         multilabel = self.visit(node.func)
-        print("call1", multilabel)
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
 
@@ -94,7 +93,10 @@ class Visitor (BaseVisitor):
             if arg_multilabel is None:
                 arg_multilabel = Multilabel(self.policy.patterns)
             multilabel = multilabel.combine(arg_multilabel, self.vulnerabilities)
-        print("call2", multilabel)
+
+        for pattern in self.policy.get_patterns_for_sanitizer(node.func.id):
+            if not multilabel.pattern_labels[pattern].is_empty():
+                multilabel.pattern_labels[pattern].add_sanitizer(Sanitizer(node.func.id, node.lineno))
         return multilabel
 
     def visit_Attribute(self, node):
@@ -112,16 +114,17 @@ class Visitor (BaseVisitor):
         return multilabel
 
     def visit_Assign(self, node):
-        print("assign")
         multilabel = self.visit(node.value)
-        print("assign1", multilabel)
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
+        for tar in node.targets:
+            tar_multilabel = self.visit(tar)
+            if tar_multilabel is None:
+                tar_multilabel = Multilabel(self.policy.patterns)
+            multilabel = multilabel.combine(tar_multilabel, self.vulnerabilities)
         
         for target in node.targets:
-            self.multilabelling.update_multilabel_for_name(target, multilabel)
-
-        print("assign2", multilabel.pattern_sinks)
+            self.multilabelling.update_multilabel_for_name(target.id, multilabel)
         return multilabel
     
     def visit_If(self, node):

@@ -5,6 +5,7 @@ from Constructors.Pattern import *
 from Constructors.Policy import *
 from Constructors.Multilabelling import *
 from Constructors.Multilabel import *
+from Constructors.Vulnerabilities import *
 from Visitor import *
 
 def analyze_code(tree, vulnerabilities, policy):
@@ -99,7 +100,7 @@ def main():
     ast_json = json.loads(json.dumps(ast_tree, default=lambda x: x.__dict__))
 
     policy = Policy([])
-    vulnerabilities = None
+    vulnerabilities = Vulnerabilities()
     if (len(vul_content) == 0):
         vulnerabilities = []
     else:
@@ -117,9 +118,9 @@ def main():
     test_Visitor = Visitor(ast_tree, vulnerabilities, policy)
     test_Visitor.visit(ast_tree)
 
-
-    with open(outputFile, "w", encoding="utf-8") as outfile:
-        json.dump(vulnerabilities, outfile, indent=1)
+    print(vulnerabilities.vulnerabilities)
+    #with open(outputFile, "w", encoding="utf-8") as outfile:
+    #    json.dump(vulnerabilities, outfile, indent=1)
 
     sys.exit(1)
 

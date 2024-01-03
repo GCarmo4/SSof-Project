@@ -5,7 +5,7 @@ class Multilabelling:
         self.labelling_map = initial_mapping if initial_mapping else {}
 
     def get_multilabel_for_name(self, variable_name):
-        return self.labelling_map.get(variable_name, Multilabel([]))
+        return self.labelling_map[variable_name]
 
     def update_multilabel_for_name(self, variable_name, new_multilabel):
         self.labelling_map[variable_name] = new_multilabel

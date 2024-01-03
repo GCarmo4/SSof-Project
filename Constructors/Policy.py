@@ -4,6 +4,19 @@ class Policy:
     def __init__(self, patterns):
         self.patterns = patterns
 
+    def get_sanitizers(self):
+        sanitizers = []
+        for pattern in self.patterns:
+            sanitizers += pattern.get_sanitizer_names()
+        return sanitizers
+    
+    def get_patterns_for_sanitizer(self, sanitizer):
+        patterns = []
+        for pattern in self.patterns:
+            if sanitizer in pattern.get_sanitizer_names():
+                patterns += [pattern]
+        return patterns
+
     def get_pattern_sink(self, sink):
         patterns_sink=[]
         for pattern in self.patterns:
@@ -53,20 +66,6 @@ class Policy:
                 illegal_multilabel.pattern_labels[pattern.vulnerability_name] = multilabel.pattern_labels[pattern.vulnerability_name]
 
         return illegal_multilabel
-    
-    def get_illegal_flows(self, name: str, multilabel: Multilabel, implicit: bool = False) -> Multilabel:
-        illegal_flows_multilabel = Multilabel([])
-        print("\n\n\n")
-        print(multilabel)
-        pattern_labels = multilabel.pattern_labels
-        print("name:", name) # check if pattern_labels has stuff like {str , label}
-        print(pattern_labels.keys())
-        for pattern in pattern_labels.keys():
-            if pattern.is_sink(name) and not (not pattern.implicit and implicit):
-                #print(f"Found illegal flow for pattern {pattern.vulnerability}")
-                illegal_flows_multilabel.update({pattern: pattern_labels[pattern]})
-        
-        return illegal_flows_multilabel
     
     def add_pattern(self, pattern):
         self.patterns += [pattern]

@@ -1,27 +1,43 @@
+from Constructors.Multilabel import *
+from Constructors.Label import *
+from Constructors.Sanitizer import *
+from Constructors.Sink import *
+
 class Vulnerabilities:
     def __init__(self):
         
-        self.vulnerabilities_dict = {}
+        self.vulnerabilities = []
 
-    def report_vulnerability(self, name, multilabel):
-        
-        if name not in self.vulnerabilities_dict:
-            self.vulnerabilities_dict[name] = []
-
+    def report_vulnerability(self, multilabel):
         # Save the vulnerability information
-        self.vulnerabilities_dict[name].append(multilabel)
+        patterns = list(multilabel.pattern_sinks.keys())
+        for pattern in patterns:
+            for source in multilabel.pattern_labels[pattern].sources:
+                print(multilabel.pattern_sinks[pattern])
+                if not multilabel.pattern_labels[pattern].is_empty():
+                    vulnerability = {}
+                    vulnerability["vulnerability"] = pattern.vulnerability_name
+                    vulnerability["source"] = (source.name, source.line)
+                    sink = multilabel.pattern_sinks[pattern]
+                    vulnerability["sink"] = (sink.name, sink.line)
+                    if len(multilabel.pattern_labels[pattern].sources) == len(multilabel.pattern_labels[pattern].sanitizers):
+                        vulnerability["unsanitized_flows"] = "no"
+                    else:
+                        vulnerability["unsanitized_flows"] = "yes"
+                    sanitizers = multilabel.pattern_labels[pattern].get_sanitizers_for_source(source)
+                    vul_sanitizer = []
+                    for sanitizer in sanitizers:
+                        vul_sanitizer += [[sanitizer.name, sanitizer.line]]
+                    vulnerability["sanitized_flows"] = vul_sanitizer
+                    #sanitized
+                    self.vulnerabilities += [vulnerability]
 
     def get_vulnerabilities(self):
         
         return self.vulnerabilities_dict
-
-
-# Example usage:
-# Assuming you have a Multilabel object named 'example_multilabel' and a name 'example_name' (ou seja isto é testar já com alguma coisa criada)
-vulnerabilities_collector = Vulnerabilities()
-vulnerabilities_collector.report_vulnerability("SQL Injection", example_multilabel)
-vulnerabilities_collector.report_vulnerability("XSS Attack", another_multilabel)
-
-# Get all detected vulnerabilities
-detected_vulnerabilities = vulnerabilities_collector.get_vulnerabilities()
-print(detected_vulnerabilities)
+    
+    def get_all_sinks(self):
+        sinks = []
+        for v in self.vulnerabilities:
+            sinks += v["sink"][0]
+        return sinks
