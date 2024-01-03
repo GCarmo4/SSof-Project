@@ -12,6 +12,7 @@ class Visitor (BaseVisitor):
         super().__init__(root, vulnerabilities, policy)
         self.multilabelling = Multilabelling()
         self.policy = policy
+        self.from_call = False
     
     #def visit(self, expr):
     #    return self.multilabelling.get_multilabel_for_name(expr)
@@ -37,9 +38,14 @@ class Visitor (BaseVisitor):
             patterns = self.policy.get_patterns_for_source(node.id)
             for pattern in patterns:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
+
+        if (node.id not in self.policy.get_all_sources()) and (node.id not in self.multilabelling.labelling_map) and not self.from_call:
+            for pattern in multilabel.pattern_labels:
+                multilabel.add_source(pattern, Source(node.id, node.lineno))
+
         patterns_for_sink = []
         patterns_for_sink = self.policy.get_pattern_sink(node.id)
-        if (len(patterns_for_sink) != 0) and (node.id not in self.vulnerabilities.get_all_sinks()):
+        if (len(patterns_for_sink) != 0) and (node.id not in self.vulnerabilities.get_all_sinks()) and (not multilabel.is_source_in_labels(node.id)):
             print("sus", node.id)
             multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno), self.vulnerabilities)
 
@@ -84,10 +90,11 @@ class Visitor (BaseVisitor):
         return multilabel
 
     def visit_Call(self, node):
+        self.from_call = True
         multilabel = self.visit(node.func)
+        self.from_call = False
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
-
         for arg in node.args:
             arg_multilabel = self.visit(arg)
             if arg_multilabel is None:
@@ -124,6 +131,10 @@ class Visitor (BaseVisitor):
             multilabel = multilabel.combine(tar_multilabel, self.vulnerabilities)
         
         for target in node.targets:
+            if not multilabel.is_source(target.id):
+                for pattern in multilabel.pattern_labels:
+                    if target.id in multilabel.pattern_labels[pattern].get_source_names():
+                        multilabel.pattern_labels[pattern].remove_source(target.id)
             self.multilabelling.update_multilabel_for_name(target.id, multilabel)
         return multilabel
     

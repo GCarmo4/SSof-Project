@@ -9,6 +9,10 @@ class Multilabel():
 
     def add_source(self, pattern, source):
         self.pattern_labels[pattern].add_source(source)
+        temp = self.pattern_labels.copy()
+        #temp_value = temp[pattern]
+        temp[pattern] = temp.pop(pattern)
+        self.pattern_labels = temp
 
     def get_source(self, pattern):
         if pattern in self.pattern_labels.keys():
@@ -54,6 +58,24 @@ class Multilabel():
         for pattern in patterns:
             names.append(self.pattern_labels[pattern])
         return names
+    
+    def is_sink(self, sink_name):
+        for pattern in self.pattern_labels:
+            if pattern.is_sink(sink_name):
+                return True
+        return False
+
+    def is_source(self, source_name):
+        for pattern in self.pattern_labels:
+            if pattern.is_source(source_name):
+                return True
+        return False
+    
+    def is_source_in_labels(self, source_name):
+        for pattern in self.pattern_labels:
+            if source_name in self.pattern_labels[pattern].get_source_names():
+                return True
+        return False
 
     def __str__(self):
         return "\n".join([f"{pattern_name}:\n{label}" for pattern_name, label in self.pattern_labels.items()])

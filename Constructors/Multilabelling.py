@@ -10,5 +10,8 @@ class Multilabelling:
     def update_multilabel_for_name(self, variable_name, new_multilabel):
         self.labelling_map[variable_name] = new_multilabel
 
+    def remove_multilabel(self, var_name):
+        self.labeling_map.pop(var_name)
+
     def __str__(self):
         return "\n".join([f"{variable_name}: {multilabel}" for variable_name, multilabel in self.labelling_map.items()])

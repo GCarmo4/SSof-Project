@@ -23,6 +23,19 @@ class Labels (object):
 
     def get_sources(self):
         return self.sources
+    
+    def is_source_by_name(self, source_name):
+        for s in self.sources:
+            if s.name == source_name:
+                return True
+        return False
+    
+    def get_source_names(self):
+        sources = []
+        for source in self.sources:
+            sources += [source.name]
+        print(sources)
+        return sources
 
     def get_sanitizers(self):
         return self.sanitizers
@@ -80,6 +93,10 @@ class Labels (object):
             if source_name in self.sanitizers[s]:
                 return True
         return False
+    
+    def remove_source(self, source_name):
+        i = self.get_source_index_by_name(source_name)
+        del self.sources[i]
 
     def __str__(self):
         return f"Sources: {self.sources}\nSanitizers: {self.sanitizers}"
