@@ -26,18 +26,22 @@ class Visitor (BaseVisitor):
         return multilabel
 
     def visit_Name(self, node):
+        multilabel = Multilabel(self.policy.patterns)
+        print(node.id)
         if node.id in self.policy.get_all_sources():
+            print("here")
             patterns = self.policy.get_patterns_for_source(node.id)
-            multilabel = Multilabel(patterns)
             for pattern in patterns:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
+                print("source", multilabel.pattern_labels[pattern])
         patterns_for_sink = []
         patterns_for_sink = self.policy.get_pattern_sink(node.id)
         if len(patterns_for_sink) != 0:
-            multilabel = Multilabel(self.policy.patterns)
+            print("AHAHAHAH")
             multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno), self.vulnerabilities)
+            print("sssss", multilabel.pattern_sinks)
 
-
+        return multilabel
         #if node.id in self.policy.get_all_sinks():
         # ainda n descobri o q fzr / como, c os sinks
 
@@ -79,7 +83,9 @@ class Visitor (BaseVisitor):
         return multilabel
 
     def visit_Call(self, node):
+        print("call")
         multilabel = self.visit(node.func)
+        print("call1", multilabel)
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
 
@@ -88,7 +94,7 @@ class Visitor (BaseVisitor):
             if arg_multilabel is None:
                 arg_multilabel = Multilabel(self.policy.patterns)
             multilabel = multilabel.combine(arg_multilabel, self.vulnerabilities)
-        
+        print("call2", multilabel)
         return multilabel
 
     def visit_Attribute(self, node):
@@ -106,13 +112,16 @@ class Visitor (BaseVisitor):
         return multilabel
 
     def visit_Assign(self, node):
+        print("assign")
         multilabel = self.visit(node.value)
+        print("assign1", multilabel)
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
         
         for target in node.targets:
             self.multilabelling.update_multilabel_for_name(target, multilabel)
 
+        print("assign2", multilabel.pattern_sinks)
         return multilabel
     
     def visit_If(self, node):

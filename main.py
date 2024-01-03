@@ -112,20 +112,11 @@ def main():
 
     #analyze_code(ast_tree, vulnerabilities, policy)
 
-    label1 = Labels().add_source("a")
-    label2 = Labels().add_source("b")
-    p1 = Pattern("a", "b", "c", "d")
-
-    Multilabel1 = Multilabel([p1])
-    Multilabel1.add_source(p1,"a")
-    Multilabel2 = Multilabel([p1])
-    Multilabel2.add_source(p1,"b")
-    Multilabel1 = Multilabel1.combine(Multilabel2, vulnerabilities)
-    print(Multilabel1)
 
 
     test_Visitor = Visitor(ast_tree, vulnerabilities, policy)
     test_Visitor.visit(ast_tree)
+
 
     with open(outputFile, "w", encoding="utf-8") as outfile:
         json.dump(vulnerabilities, outfile, indent=1)
