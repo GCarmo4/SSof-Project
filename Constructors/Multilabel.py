@@ -26,9 +26,8 @@ class Multilabel():
                 self.pattern_sinks[pattern] = []
             if sink.name not in self.pattern_labels[pattern].get_source_names():
                 self.pattern_sinks[pattern] += [sink]
-        if self.has_illegal_flow():
+        if self.has_illegal_flow(vulnerabilities):
             vulnerabilities.report_vulnerability(self)
-            self.pattern_sinks = {}
 
     def combine(self, other_multi_label, vulnerabilities, combine_sink = True):
         combined_multi_label = Multilabel([])
@@ -44,16 +43,19 @@ class Multilabel():
                         combined_multi_label.pattern_sinks[p] = list(set(combined_multi_label.pattern_sinks[p]))
                     else:
                         combined_multi_label.pattern_sinks[p] = other_multi_label.pattern_sinks[p]
-        if combined_multi_label.has_illegal_flow():
+        if combined_multi_label.has_illegal_flow(vulnerabilities):
             vulnerabilities.report_vulnerability(combined_multi_label)
-            combined_multi_label.pattern_sinks = {}
         return combined_multi_label
     
-    def has_illegal_flow(self):
+    def has_illegal_flow(self, vulnerabilities):
         temp = self.pattern_sinks.copy()
         for pattern in self.pattern_sinks:
             if self.pattern_labels[pattern].is_empty():
                 temp.pop(pattern)
+            for sink in temp[pattern]:
+                for source in self.pattern_labels[pattern].get_sources():
+                    if ([sink.name, source.name] in vulnerabilities.get_source_sink()):
+                        temp[pattern].remove(sink)
         return len(temp) != 0
     
     def get_pattern_names(self):

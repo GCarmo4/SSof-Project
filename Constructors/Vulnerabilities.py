@@ -44,3 +44,9 @@ class Vulnerabilities:
         for v in self.vulnerabilities:
             sinks += v["sink"][0]
         return sinks
+    
+    def get_source_sink(self):
+        pairs = []
+        for v in self.vulnerabilities:
+            pairs += [[v["sink"][0], v["source"][0]]]
+        return pairs
