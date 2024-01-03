@@ -34,7 +34,6 @@ class Labels (object):
         sources = []
         for source in self.sources:
             sources += [source.name]
-        print(sources)
         return sources
 
     def get_sanitizers(self):

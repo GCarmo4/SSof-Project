@@ -34,7 +34,6 @@ class Visitor (BaseVisitor):
             multilabel = self.multilabelling.get_multilabel_for_name(node.id)
 
         if node.id in self.policy.get_all_sources():
-            print("source", node.lineno)
             patterns = self.policy.get_patterns_for_source(node.id)
             for pattern in patterns:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
@@ -45,11 +44,12 @@ class Visitor (BaseVisitor):
 
         patterns_for_sink = []
         patterns_for_sink = self.policy.get_pattern_sink(node.id)
-        if (len(patterns_for_sink) != 0) and (node.id not in self.vulnerabilities.get_all_sinks()) and (not multilabel.is_source_in_labels(node.id)):
-            print("sus", node.id)
+        if (len(patterns_for_sink) != 0) and (node.id not in self.vulnerabilities.get_all_sinks()):
             multilabel.add_patterns_sink(patterns_for_sink, Sink(node.id, node.lineno), self.vulnerabilities)
 
-        
+        if(node.id == "a"):
+            print(multilabel)
+
         return multilabel
 
 
