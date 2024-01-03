@@ -20,8 +20,11 @@ class Multilabel():
         if (pattern in self.pattern_labels.keys()) and (sanitizer_name not in self.pattern_labels[pattern].sanitizers):
             self.pattern_labels[pattern].add_sanitizer(sanitizer_name)
 
-    def add_patterns_sink(self, patterns, sink, vulnerabilities):
+    def add_patterns_sink(self, patterns, sink, vulnerabilities, multilabelling):
+        #print("s", sink)
+        
         for pattern in patterns:
+            #print("K", self.pattern_labels[pattern].get_source_names())
             if pattern not in self.pattern_sinks:
                 self.pattern_sinks[pattern] = []
             if sink.name not in self.pattern_labels[pattern].get_source_names():
@@ -43,8 +46,10 @@ class Multilabel():
                         combined_multi_label.pattern_sinks[p] = list(set(combined_multi_label.pattern_sinks[p]))
                     else:
                         combined_multi_label.pattern_sinks[p] = other_multi_label.pattern_sinks[p]
+        #print("here", multilabelling.labelling_map)
         if combined_multi_label.has_illegal_flow(vulnerabilities):
             vulnerabilities.report_vulnerability(combined_multi_label)
+        #print("here", multilabelling.labelling_map)
         return combined_multi_label
     
     def has_illegal_flow(self, vulnerabilities):
@@ -52,9 +57,10 @@ class Multilabel():
         for pattern in self.pattern_sinks:
             if self.pattern_labels[pattern].is_empty():
                 temp.pop(pattern)
+                break
             for sink in temp[pattern]:
                 for source in self.pattern_labels[pattern].get_sources():
-                    if ([sink.name, source.name] in vulnerabilities.get_source_sink()):
+                    if ([sink.name, source.name] in vulnerabilities.get_source_sink()) and sink in temp[pattern]:
                         temp[pattern].remove(sink)
         return len(temp) != 0
     

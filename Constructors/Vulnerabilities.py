@@ -10,12 +10,14 @@ class Vulnerabilities:
         self.vulnerabilities_multilabel = []
 
     def report_vulnerability(self, multilabel):
+
         self.vulnerabilities_multilabel += [multilabel]
         # Save the vulnerability information
         patterns = list(multilabel.pattern_sinks.keys())
+    
         for pattern in patterns:
             for source in multilabel.pattern_labels[pattern].sources:
-                for sink in multilabel.pattern_sinks[pattern]:
+                for sink in multilabel.pattern_sinks[pattern]:  # <-- isto está vazio
                     if not multilabel.pattern_labels[pattern].source_in_sanitizer(source):
                         multilabel.pattern_labels[pattern].unsanitized_illegal_flows += 1
                     if not multilabel.pattern_labels[pattern].is_empty():

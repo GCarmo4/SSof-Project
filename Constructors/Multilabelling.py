@@ -13,5 +13,8 @@ class Multilabelling:
     def remove_multilabel(self, var_name):
         self.labeling_map.pop(var_name)
 
+    def remove_var(self, var_name):
+        self.labelling_map.pop(var_name)
+
     def __str__(self):
         return "\n".join([f"{variable_name}: {multilabel}" for variable_name, multilabel in self.labelling_map.items()])
