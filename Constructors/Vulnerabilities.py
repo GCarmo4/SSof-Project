@@ -13,7 +13,7 @@ class Vulnerabilities:
 
         # Save the vulnerability information
         patterns = list(multilabel.pattern_sinks.keys())
-    
+
         for pattern in patterns:
             for source in multilabel.pattern_labels[pattern].sources:
                 for sink in multilabel.pattern_sinks[pattern]:  # <-- isto está vazio
@@ -39,6 +39,7 @@ class Vulnerabilities:
                         vulnerability["sanitized_flows"] = vul_sanitizer
                         #sanitized
                         self.vulnerabilities += [vulnerability]
+                    
 
     def get_vulnerabilities(self):
         

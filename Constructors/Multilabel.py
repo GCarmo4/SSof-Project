@@ -21,14 +21,11 @@ class Multilabel():
             self.pattern_labels[pattern].add_sanitizer(sanitizer_name)
 
     def add_patterns_sink(self, patterns, sink, vulnerabilities, multilabelling):
-        #print("s", sink)
         
         for pattern in patterns:
             if pattern not in self.pattern_sinks.keys():
-                print("aqui")
                 self.pattern_sinks[pattern] = []
             if sink.name not in self.pattern_labels[pattern].get_source_names():
-                print("sink", sink.name)
                 self.pattern_sinks[pattern] += [sink]
         if self.has_illegal_flow():
             vulnerabilities.report_vulnerability(self)
@@ -46,19 +43,12 @@ class Multilabel():
                         
                         combined_multi_label.pattern_sinks[p] += other_multi_label.pattern_sinks[p]
                         combined_multi_label.pattern_sinks[p] = list(set(combined_multi_label.pattern_sinks[p]))
-                        print("True", combined_multi_label.pattern_sinks)
                     else:
                         
                         combined_multi_label.pattern_sinks[p] = other_multi_label.pattern_sinks[p]
-                        print("False", combined_multi_label.pattern_sinks)
-        #print("here", multilabelling.labelling_map)
-        print("1             ", combined_multi_label.pattern_sinks)
         if combined_multi_label.has_illegal_flow():
-            print("2           ", combined_multi_label.pattern_sinks)
             vulnerabilities.report_vulnerability(combined_multi_label)
             combined_multi_label.pattern_sinks = {}
-        #print("here", multilabelling.labelling_map)
-        print("2           ", combined_multi_label.pattern_sinks)
         return combined_multi_label
     
     def has_illegal_flow(self):

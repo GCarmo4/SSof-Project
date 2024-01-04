@@ -38,8 +38,6 @@ class Visitor (BaseVisitor):
             patterns = self.policy.get_patterns_for_source(node.id)
             for pattern in patterns:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
-                print("source", node.id, node.lineno)
-                print(pattern)
         if (node.id not in self.policy.get_all_sources()) and (node.id not in self.multilabelling.labelling_map) and not self.from_call:
             for pattern in multilabel.pattern_labels:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
@@ -99,17 +97,11 @@ class Visitor (BaseVisitor):
             arg_multilabel = self.visit(arg)
             if arg_multilabel is None:
                 arg_multilabel = Multilabel(self.policy.patterns)
-            if node.func.id == 'e':
-                for pattern in multilabel.pattern_sinks.keys():
-                    print(multilabel.pattern_sinks[pattern])
             multilabel = multilabel.combine(arg_multilabel, self.vulnerabilities)
 
         for pattern in self.policy.get_patterns_for_sanitizer(node.func.id):
             if not multilabel.pattern_labels[pattern].is_empty():
                 multilabel.pattern_labels[pattern].add_sanitizer(Sanitizer(node.func.id, node.lineno))
-        if node.func.id == 'e':
-            for pattern in multilabel.pattern_sinks.keys():
-                print(multilabel.pattern_sinks[pattern])
         return multilabel
 
     def visit_Attribute(self, node):
@@ -141,7 +133,6 @@ class Visitor (BaseVisitor):
                 for pattern in multilabel.pattern_labels:
                     if target.id in multilabel.pattern_labels[pattern].get_source_names():
                         multilabel.pattern_labels[pattern].remove_source(target.id)
-            #print("..", multilabel.pattern_labels)
             self.multilabelling.update_multilabel_for_name(target.id, multilabel)
         return multilabel
     
