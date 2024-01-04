@@ -149,15 +149,30 @@ class Visitor (BaseVisitor):
         multilabel = self.visit(node.test)
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
-        body_multilabel = self.visit(node.body)
-        if body_multilabel is None:
-            body_multilabel = Multilabel(self.policy.patterns)
-        multilabel = multilabel.combine(body_multilabel, self.vulnerabilities)
-        if len(node.orelse) != 0:
-            orelse_multilabel = self.visit(node.orelse)
+        
+        for assign in node.body:
+            assign_multilabel = self.visit(assign)
+            if assign_multilabel is None:
+                assign_multilabel = Multilabel(self.policy.patterns)
+            
+            multilabel = multilabel.combine(assign_multilabel, self.vulnerabilities)
+
+        for orelse in node.orelse:
+            orelse_multilabel = self.visit(orelse)
             if orelse_multilabel is None:
                 orelse_multilabel = Multilabel(self.policy.patterns)
+            
             multilabel = multilabel.combine(orelse_multilabel, self.vulnerabilities)
+
+        #body_multilabel = self.visit(node.body)
+        #if body_multilabel is None:
+        #    body_multilabel = Multilabel(self.policy.patterns)
+        #multilabel = multilabel.combine(body_multilabel, self.vulnerabilities)
+        #if len(node.orelse) != 0:
+        #    orelse_multilabel = self.visit(node.orelse)
+        #    if orelse_multilabel is None:
+        #        orelse_multilabel = Multilabel(self.policy.patterns)
+        #    multilabel = multilabel.combine(orelse_multilabel, self.vulnerabilities)
 
         return multilabel
 
@@ -168,5 +183,22 @@ class Visitor (BaseVisitor):
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
         
+        multilabel = self.visit(node.test)
+        if multilabel is None:
+            multilabel = Multilabel(self.policy.patterns)
+        
+        for assign in node.body:
+            assign_multilabel = self.visit(assign)
+            if assign_multilabel is None:
+                assign_multilabel = Multilabel(self.policy.patterns)
+            
+            multilabel = multilabel.combine(assign_multilabel, self.vulnerabilities)
+
+        for orelse in node.orelse:
+            orelse_multilabel = self.visit(orelse)
+            if orelse_multilabel is None:
+                orelse_multilabel = Multilabel(self.policy.patterns)
+            
+            multilabel = multilabel.combine(orelse_multilabel, self.vulnerabilities)
 
         return multilabel
