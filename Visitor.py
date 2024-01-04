@@ -38,7 +38,8 @@ class Visitor (BaseVisitor):
             patterns = self.policy.get_patterns_for_source(node.id)
             for pattern in patterns:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
-                print("source", node.id)
+                print("source", node.id, node.lineno)
+                print(pattern)
         if (node.id not in self.policy.get_all_sources()) and (node.id not in self.multilabelling.labelling_map) and not self.from_call:
             for pattern in multilabel.pattern_labels:
                 multilabel.add_source(pattern, Source(node.id, node.lineno))
@@ -98,12 +99,17 @@ class Visitor (BaseVisitor):
             arg_multilabel = self.visit(arg)
             if arg_multilabel is None:
                 arg_multilabel = Multilabel(self.policy.patterns)
-
+            if node.func.id == 'e':
+                for pattern in multilabel.pattern_sinks.keys():
+                    print(multilabel.pattern_sinks[pattern])
             multilabel = multilabel.combine(arg_multilabel, self.vulnerabilities)
 
         for pattern in self.policy.get_patterns_for_sanitizer(node.func.id):
             if not multilabel.pattern_labels[pattern].is_empty():
                 multilabel.pattern_labels[pattern].add_sanitizer(Sanitizer(node.func.id, node.lineno))
+        if node.func.id == 'e':
+            for pattern in multilabel.pattern_sinks.keys():
+                print(multilabel.pattern_sinks[pattern])
         return multilabel
 
     def visit_Attribute(self, node):
@@ -143,6 +149,15 @@ class Visitor (BaseVisitor):
         multilabel = self.visit(node.test)
         if multilabel is None:
             multilabel = Multilabel(self.policy.patterns)
+        body_multilabel = self.visit(node.body)
+        if body_multilabel is None:
+            body_multilabel = Multilabel(self.policy.patterns)
+        multilabel = multilabel.combine(body_multilabel, self.vulnerabilities)
+        if len(node.orelse) != 0:
+            orelse_multilabel = self.visit(node.orelse)
+            if orelse_multilabel is None:
+                orelse_multilabel = Multilabel(self.policy.patterns)
+            multilabel = multilabel.combine(orelse_multilabel, self.vulnerabilities)
 
         return multilabel
 

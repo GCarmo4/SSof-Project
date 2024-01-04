@@ -24,10 +24,11 @@ class Multilabel():
         #print("s", sink)
         
         for pattern in patterns:
-            #print("K", self.pattern_labels[pattern].get_source_names())
-            if pattern not in self.pattern_sinks:
+            if pattern not in self.pattern_sinks.keys():
+                print("aqui")
                 self.pattern_sinks[pattern] = []
             if sink.name not in self.pattern_labels[pattern].get_source_names():
+                print("sink", sink.name)
                 self.pattern_sinks[pattern] += [sink]
         if self.has_illegal_flow(vulnerabilities):
             vulnerabilities.report_vulnerability(self)
@@ -40,28 +41,32 @@ class Multilabel():
             if len(self.pattern_sinks) != 0:
                 combined_multi_label.pattern_sinks = self.pattern_sinks
             if len(other_multi_label.pattern_sinks) != 0:
-                for p in other_multi_label.pattern_sinks:
+                for p in other_multi_label.pattern_sinks.keys():
                     if p in combined_multi_label.pattern_sinks.keys():
+                        
                         combined_multi_label.pattern_sinks[p] += other_multi_label.pattern_sinks[p]
                         combined_multi_label.pattern_sinks[p] = list(set(combined_multi_label.pattern_sinks[p]))
+                        print("True", combined_multi_label.pattern_sinks)
                     else:
+                        
                         combined_multi_label.pattern_sinks[p] = other_multi_label.pattern_sinks[p]
+                        print("False", combined_multi_label.pattern_sinks)
         #print("here", multilabelling.labelling_map)
+        print("1             ", combined_multi_label.pattern_sinks)
         if combined_multi_label.has_illegal_flow(vulnerabilities):
+            print("2           ", combined_multi_label.pattern_sinks)
             vulnerabilities.report_vulnerability(combined_multi_label)
+            combined_multi_label.pattern_sinks = {}
         #print("here", multilabelling.labelling_map)
+        print("2           ", combined_multi_label.pattern_sinks)
         return combined_multi_label
     
     def has_illegal_flow(self, vulnerabilities):
         temp = self.pattern_sinks.copy()
         for pattern in self.pattern_sinks:
+            temp_list = temp[pattern].copy()
             if self.pattern_labels[pattern].is_empty():
                 temp.pop(pattern)
-                break
-            for sink in temp[pattern]:
-                for source in self.pattern_labels[pattern].get_sources():
-                    if ([sink.name, source.name] in vulnerabilities.get_source_sink()) and sink in temp[pattern]:
-                        temp[pattern].remove(sink)
         return len(temp) != 0
     
     def get_pattern_names(self):
